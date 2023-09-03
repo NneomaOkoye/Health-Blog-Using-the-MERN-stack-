@@ -18,7 +18,7 @@ const articlesInfo = {
     }, 
 }
 
-//initialize middleware
+//initialize iddleware
 // we used to have to install parser but now it is built in middleware
 // function of express. It parses incoming JSON payload
 app.use(express.json({ extended: false }));
