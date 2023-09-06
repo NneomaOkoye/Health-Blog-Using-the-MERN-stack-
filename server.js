@@ -26,8 +26,7 @@ const articlesInfo = {
 app.use(express.json());
 
 // Connect to MongoDB
-const uri =
-  "mongodb+srv://okoyenneoma1:newpassword@cluster0.7cpxdrg.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://okoyenneoma1:newpassword@cluster0.7cpxdrg.mongodb.net/?retryWrites=true&w=majority";
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
