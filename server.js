@@ -1,11 +1,14 @@
 const express = require("express");
 const cors = require('cors')
-require("dotenv").config(); 
+const {MongoClient} = require("mongodb");
+const mongoose = require("mongoose");
+require("dotenv").config();
+
 const app = express()
 const PORT = process.env.PORT || 8000;
 
+app.use(cors());
 
-app.use(cors())
 const articlesInfo = {
     "learn-react-new": {
         comments: [],
@@ -15,31 +18,36 @@ const articlesInfo = {
     },
     "my-thoughts-on-learning-react": {
         comments: [],
-    }, 
-}
+    },
+};
 
-//initialize iddleware
-// we used to have to install parser but now it is built in middleware
-// function of express. It parses incoming JSON payload
-app.use(express.json({ extended: false }));
+//initialize middleware
+app.use(express.json())
 
-const { MongoClient } = require("mongodb");
 
-// Replace the uri string with your connection string.
+// Connect to Mongodb
 const uri = "mongodb+srv://okoyenneoma1:newpassword@cluster0.7cpxdrg.mongodb.net/?retryWrites=true&w=majority";
 
-const client = new MongoClient(uri);
+const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true });
 
 async function run() {
   try {
+    await client.connect();
     const database = client.db('test');
     const movies = database.collection('test-collection');
 
-     //Query for a movie that has the title 'Back to the Future'
-    const query = { age: 26 };
-    const movie = await movies.findOne(query);
+    //Define a user schema and model (assuming you have a "User" model)
+    const User = mongoose.model('User', {
+      username: String,
+      password: String,
+    });
 
-    console.log(movie);
+    //Login endpoint
+    app.post('/api/login', async (req, res) => {
+      const { username, password } = req.body; //fix the destruction statement
+      //Handle login logic here, query your Mongodb for user authentication, etc.filter(item => item)
+    });
+
   } finally {
     //Ensures that the client will close when you finish/error
     await client.close();
@@ -56,8 +64,19 @@ app.post('/api/articles/add-comments', (req, res) => {
     res.status(200).send(articlesInfo[articlesName]);
 });
 
+//Get all blog posts
+app.get('/blog/',(req, res) => {
+//Implement logic to retrieve all blog posts
+});
+
+//Get all blog post with an id of whatever
+app.get('/blog/:id', (req, res) => {
+  const id = req.params.id;
+ res.json("my id is:" + id);
+});
+
 app.get('/', (req, res) => {
-    res.json('data')
+    res.json('data');
 });
 
 
