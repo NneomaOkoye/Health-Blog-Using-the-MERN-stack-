@@ -1,83 +1,92 @@
 const express = require("express");
-const cors = require('cors')
-const {MongoClient} = require("mongodb");
+const cors = require("cors");
+const { MongoClient } = require("mongodb");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const app = express()
+const app = express();
 const PORT = process.env.PORT || 8000;
 
 app.use(cors());
 
+// Mock data for blog articles
 const articlesInfo = {
-    "learn-react-new": {
-        comments: [],
-    },
-    "learn-react": {
-        comments: [],
-    },
-    "my-thoughts-on-learning-react": {
-        comments: [],
-    },
+  "learn-react-new": {
+    comments: [],
+  },
+  "learn-react": {
+    comments: [],
+  },
+  "my-thoughts-on-learning-react": {
+    comments: [],
+  },
 };
 
-//initialize middleware
-app.use(express.json())
+// Initialize middleware
+app.use(express.json());
 
+// Connect to MongoDB
+const uri =
+  "mongodb+srv://okoyenneoma1:newpassword@cluster0.7cpxdrg.mongodb.net/?retryWrites=true&w=majority";
 
-// Connect to Mongodb
-const uri = "mongodb+srv://okoyenneoma1:newpassword@cluster0.7cpxdrg.mongodb.net/?retryWrites=true&w=majority";
-
-const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function run() {
   try {
     await client.connect();
-    const database = client.db('test');
-    const movies = database.collection('test-collection');
+    const database = client.db("test");
 
-    //Define a user schema and model (assuming you have a "User" model)
-    const User = mongoose.model('User', {
+    // Define a user schema and model (assuming you have a "User" model)
+    const User = mongoose.model("User", {
       username: String,
       password: String,
     });
 
-    //Login endpoint
-    app.post('/api/login', async (req, res) => {
-      const { username, password } = req.body; //fix the destruction statement
-      //Handle login logic here, query your Mongodb for user authentication, etc.filter(item => item)
+    // Login endpoint
+    app.post("/api/login", async (req, res) => {
+      const { username, password } = req.body;
+
+      try {
+        // Find user by username and password (you should hash and salt passwords in production)
+        const user = await User.findOne({ username, password });
+
+        if (!user) {
+          return res.status(401).json({ success: false, message: "Invalid username or password" });
+        }
+
+        // User authenticated, you can create a session or token here
+        // For simplicity, let's send a success response
+        res.status(200).json({ success: true, message: "Login successful", user });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Server error" });
+      }
     });
 
+    // Get all blog posts
+    app.get("/blog", (req, res) => {
+      // Simulated data retrieval (replace with actual database query)
+      const blogPosts = Object.keys(articlesInfo);
+      res.status(200).json({ success: true, blogPosts });
+    });
+
+    // Get a specific blog post by name
+    app.get("/blog/:name", (req, res) => {
+      const { name } = req.params;
+      const article = articlesInfo[name];
+
+      if (!article) {
+        return res.status(404).json({ success: false, message: "Article not found" });
+      }
+
+      res.status(200).json({ success: true, article });
+    });
   } finally {
-    //Ensures that the client will close when you finish/error
+    // Ensure that the client will close when you finish/error
     await client.close();
   }
 }
 
 run().catch(console.dir);
-
-
-app.post('/api/articles/add-comments', (req, res) => {
-    const {username,text} = req.body
-    const articlesName = req.query.name
-    articlesInfo[articlesName].comments.push({username, text});
-    res.status(200).send(articlesInfo[articlesName]);
-});
-
-//Get all blog posts
-app.get('/blog/',(req, res) => {
-//Implement logic to retrieve all blog posts
-});
-
-//Get all blog post with an id of whatever
-app.get('/blog/:id', (req, res) => {
-  const id = req.params.id;
- res.json("my id is:" + id);
-});
-
-app.get('/', (req, res) => {
-    res.json('data');
-});
-
 
 app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
