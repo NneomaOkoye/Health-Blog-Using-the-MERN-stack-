@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 const uri =
   "mongodb+srv://okoyenneoma1:newpassword@cluster0.7cpxdrg.mongodb.net/?retryWrites=true&w=majority";
 
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(uri);
 
 // Define a user schema and model (assuming you have a "User" model)
 const userSchema = new mongoose.Schema({
