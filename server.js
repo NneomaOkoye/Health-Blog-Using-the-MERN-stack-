@@ -7,6 +7,8 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 8000;
 
+//routes
+app.use('/api/blogpost', blogpostRoutes)
 app.use(cors());
 
 // Mock data for blog articles
@@ -25,6 +27,10 @@ const articlesInfo = {
 //initialize middleware
 app.use(express.json())
 
+app.use((req, res, next) => {
+  console.log(req.path, req.method)
+  next()
+})
 
 // Connect to Mongodb
 const uri = "mongodb+srv://okoyenneoma1:newpassword@cluster0.7cpxdrg.mongodb.net/?retryWrites=true&w=majority";

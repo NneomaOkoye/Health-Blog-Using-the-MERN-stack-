@@ -1,30 +1,65 @@
-const express = require (`express`)
+const express = require('express');
+const router = express.Router();
 
-const router = express.Router
+// Sample data for blog posts (replace with your data source)
+const blogPosts = [
+  { id: 1, title: 'First Blog Post', content: 'This is the content of the first blog post.' },
+  { id: 2, title: 'Second Blog Post', content: 'This is the content of the second blog post.' },
+];
 
-//Get all blogposts
+// Get all blog posts
 router.get('/', (req, res) => {
-    res.json({message: 'GET all blogpost'})
-})
+  res.status(200).json({ success: true, data: blogPosts });
+});
 
-//Get a single blogposts
- router.get('/:id', (res, req) => {
-    res.json({message: 'GET a single blogpost'})
- })
+// Get a single blog post by ID
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
+  const blogPost = blogPosts.find((post) => post.id === parseInt(id));
 
- //POST a new blog
- router.post('/', (req, res) => {
-    res.json({message:'POST a new blogpost'})
- })
+  if (!blogPost) {
+    return res.status(404).json({ success: false, message: 'Blog post not found' });
+  }
 
- //DELETE a new blog
- router.delete('/', (req, res) => {
-    res.json({message:'DELETE a new blogpost'})
- })
+  res.status(200).json({ success: true, data: blogPost });
+});
 
- //UPDATEa new blog
- router.update('/', (req, res) => {
-    res.json({message:'UPDATE a new blogpost'})
- })
+// Create a new blog post
+router.post('/', (req, res) => {
+  const { title, content } = req.body;
+  const newBlogPost = { id: blogPosts.length + 1, title, content };
+  blogPosts.push(newBlogPost);
 
-module.exports = router
+  res.status(201).json({ success: true, data: newBlogPost });
+});
+
+// Delete a blog post by ID
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  const index = blogPosts.findIndex((post) => post.id === parseInt(id));
+
+  if (index === -1) {
+    return res.status(404).json({ success: false, message: 'Blog post not found' });
+  }
+
+  blogPosts.splice(index, 1);
+  res.status(204).json(); // No content
+});
+
+// Update a blog post by ID
+router.patch('/:id', (req, res) => {
+  const { id } = req.params;
+  const { title, content } = req.body;
+  const index = blogPosts.findIndex((post) => post.id === parseInt(id));
+
+  if (index === -1) {
+    return res.status(404).json({ success: false, message: 'Blog post not found' });
+  }
+
+  const updatedBlogPost = { ...blogPosts[index], title, content };
+  blogPosts[index] = updatedBlogPost;
+
+  res.status(200).json({ success: true, data: updatedBlogPost });
+});
+
+module.exports = router;
