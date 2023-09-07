@@ -3,6 +3,7 @@ const cors = require("cors");
 const { MongoClient } = require("mongodb");
 const mongoose = require("mongoose");
 require("dotenv").config();
+const blogpostRoutes = require("./Routes/blogpost");
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -35,7 +36,7 @@ app.use((req, res, next) => {
 // Connect to Mongodb
 const uri = "mongodb+srv://okoyenneoma1:newpassword@cluster0.7cpxdrg.mongodb.net/?retryWrites=true&w=majority";
 
-const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(uri);
 
 async function run() {
   try {
