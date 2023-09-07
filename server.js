@@ -22,33 +22,33 @@ const articlesInfo = {
   },
 };
 
-// Middleware for logging requests
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path}`);
-  next();
-});
+//initialize middleware
+app.use(express.json())
 
-// Connect to MongoDB (using your provided URI)
-const uri =
-  "mongodb+srv://okoyenneoma1:newpassword@cluster0.7cpxdrg.mongodb.net/?retryWrites=true&w=majority";
 
-const client = new MongoClient(uri);
+// Connect to Mongodb
+const uri = "mongodb+srv://okoyenneoma1:newpassword@cluster0.7cpxdrg.mongodb.net/?retryWrites=true&w=majority";
 
-// Define a user schema and model (assuming you have a "User" model)
-const userSchema = new mongoose.Schema({
-  username: String,
-  password: String,
-});
-
-const User = mongoose.model("User", userSchema);
+const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true });
 
 async function run() {
   try {
-    await client.connect(); // Connect to MongoDB
+    await client.connect();
+    const database = client.db('test');
+    const movies = database.collection('test-collection');
 
-    const database = client.db("test");
+    //Define a user schema and model (assuming you have a "User" model)
+    const User = mongoose.model('User', {
+      username: String,
+      password: String,
+    });
 
-    // Rest of your code (login endpoint and blog endpoints) remains the same...
+    //Login endpoint
+    app.post('/api/login', async (req, res) => {
+      const { username, password } = req.body; //fix the destruction statement
+      //Handle login logic here, query your Mongodb for user authentication, etc.filter(item => item)
+    });
+
   } finally {
     // Ensure that the client will close when you finish/error
     await client.close();
@@ -57,12 +57,28 @@ async function run() {
 
 run().catch(console.dir);
 
-// Define routes
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to our blog" });
+
+app.post('/api/articles/add-comments', (req, res) => {
+    const {username,text} = req.body
+    const articlesName = req.query.name
+    articlesInfo[articlesName].comments.push({username, text});
+    res.status(200).send(articlesInfo[articlesName]);
 });
 
-//app listen for requests
-app.listen(PORT, () => {
-  console.log(`Server started at port ${PORT}`);
+//Get all blog posts
+app.get('/blog/',(req, res) => {
+//Implement logic to retrieve all blog posts
 });
+
+//Get all blog post with an id of whatever
+app.get('/blog/:id', (req, res) => {
+  const id = req.params.id;
+ res.json("my id is:" + id);
+});
+
+app.get('/', (req, res) => {
+    res.json('data');
+});
+
+
+app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
