@@ -22,8 +22,11 @@ const articlesInfo = {
   },
 };
 
-// Initialize middleware
-app.use(express.json());
+// Middleware for logging requests
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
 
 // Connect to MongoDB (using your provided URI)
 const uri =
@@ -32,10 +35,12 @@ const uri =
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Define a user schema and model (assuming you have a "User" model)
-const User = mongoose.model("User", {
+const userSchema = new mongoose.Schema({
   username: String,
   password: String,
 });
+
+const User = mongoose.model("User", userSchema);
 
 async function run() {
   try {
@@ -52,4 +57,12 @@ async function run() {
 
 run().catch(console.dir);
 
-app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
+// Define routes
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to our blog" });
+});
+
+//app listen for requests
+app.listen(PORT, () => {
+  console.log(`Server started at port ${PORT}`);
+});
