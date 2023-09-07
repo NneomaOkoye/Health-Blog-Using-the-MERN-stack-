@@ -1,64 +1,55 @@
 const express = require("express");
-const cors = require('cors')
-require("dotenv").config(); 
-const app = express()
+const cors = require("cors");
+const { MongoClient } = require("mongodb");
+const mongoose = require("mongoose");
+require("dotenv").config();
+
+const app = express();
 const PORT = process.env.PORT || 8000;
 
+app.use(cors());
 
-app.use(cors())
+// Mock data for blog articles
 const articlesInfo = {
-    "learn-react-new": {
-        comments: [],
-    },
-    "learn-react": {
-        comments: [],
-    },
-    "my-thoughts-on-learning-react": {
-        comments: [],
-    }, 
-}
+  "learn-react-new": {
+    comments: [],
+  },
+  "learn-react": {
+    comments: [],
+  },
+  "my-thoughts-on-learning-react": {
+    comments: [],
+  },
+};
 
-//initialize middleware
-// we used to have to install parser but now it is built in middleware
-// function of express. It parses incoming JSON payload
-app.use(express.json({ extended: false }));
+// Initialize middleware
+app.use(express.json());
 
-const { MongoClient } = require("mongodb");
+// Connect to MongoDB (using your provided URI)
+const uri =
+  "mongodb+srv://okoyenneoma1:newpassword@cluster0.7cpxdrg.mongodb.net/?retryWrites=true&w=majority";
 
-// Replace the uri string with your connection string.
-const uri = "mongodb+srv://okoyenneoma1:newpassword@cluster0.7cpxdrg.mongodb.net/?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-const client = new MongoClient(uri);
+// Define a user schema and model (assuming you have a "User" model)
+const User = mongoose.model("User", {
+  username: String,
+  password: String,
+});
 
 async function run() {
   try {
-    const database = client.db('test');
-    const movies = database.collection('test-collection');
+    await client.connect(); // Connect to MongoDB
 
-     //Query for a movie that has the title 'Back to the Future'
-    const query = { age: 26 };
-    const movie = await movies.findOne(query);
+    const database = client.db("test");
 
-    console.log(movie);
+    // Rest of your code (login endpoint and blog endpoints) remains the same...
   } finally {
-    //Ensures that the client will close when you finish/error
+    // Ensure that the client will close when you finish/error
     await client.close();
   }
 }
 
 run().catch(console.dir);
-
-
-app.post('/api/articles/add-comments', (req, res) => {
-    const {username,text} = req.body
-    const articlesName = req.query.name
-    articlesInfo[articlesName].comments.push({username, text});
-    res.status(200).send(articlesInfo[articlesName]);
-});
-
-app.get('/', (req, res) => {
-    res.json('data')
-});
-
 
 app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
