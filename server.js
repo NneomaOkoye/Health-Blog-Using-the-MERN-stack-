@@ -50,6 +50,28 @@ async function run() {
       password: String,
     });
 
+    // Registration endpoint
+    app.post('/api/register', async (req, res) => {
+      const { username, password } = req.body;
+      
+      try {
+        // Check if the user already exists
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+          return res.status(400).json({ message: 'Username already exists' });
+        }
+
+        // Create a new user
+        const newUser = new User({ username, password });
+        await newUser.save();
+
+        res.status(201).json({ message: 'Registration successful' });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Registration failed' });
+      }
+    });
+
     //Login endpoint
     app.post('/api/login', async (req, res) => {
       const { username, password } = req.body; //fix the destruction statement
@@ -71,6 +93,34 @@ app.post('/api/articles/add-comments', (req, res) => {
     articlesInfo[articlesName].comments.push({username, text});
     res.status(200).send(articlesInfo[articlesName]);
 });
+
+// Define a POST route for user registration
+app.post('/api/register', async (req, res) => {
+  try {
+    // Extract username and password from the request body
+    const { username, password } = req.body;
+
+    // Check if a user with the same username already exists in the database
+    const existingUser = await User.findOne({ username });
+
+    if (existingUser) {
+      // If a user with the same username exists, return a 400 Bad Request response
+      return res.status(400).json({ success: false, message: 'Username already exists' });
+    }
+
+    // If the username is unique, create a new user document and save it to the database
+    const newUser = new User({ username, password });
+    await newUser.save();
+
+    // Return a 201 Created response to indicate successful registration
+    res.status(201).json({ success: true, message: 'User registered successfully' });
+  } catch (error) {
+    // Handle any errors that may occur during registration
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+
 
 //Get all blog posts
 app.get('/blog/',(req, res) => {
