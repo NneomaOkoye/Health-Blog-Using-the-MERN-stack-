@@ -7,10 +7,12 @@ const blogpostRoutes = require("./Routes/blogpost");
 
 const app = express();
 const PORT = process.env.PORT || 8000;
-
-//routes
-app.use('/api/blogpost', blogpostRoutes)
 app.use(cors());
+
+//Routes
+app.use('/api/blogpost', blogpostRoutes)
+
+
 
 // Mock data for blog articles
 const articlesInfo = {
@@ -45,10 +47,12 @@ async function run() {
     const movies = database.collection('test-collection');
 
     //Define a user schema and model (assuming you have a "User" model)
-    const User = mongoose.model('User', {
+    const userSchema = new mongoose.Schema({
       username: String,
       password: String,
     });
+const User = mongoose.model("User", userSchema);
+    
 
     // Registration endpoint
     app.post('/api/register', async (req, res) => {
@@ -61,22 +65,50 @@ async function run() {
           return res.status(400).json({ message: 'Username already exists' });
         }
 
-        // Create a new user
+        // Create a new user 
+        //const User = mongoose.model("User", userSchema);
         const newUser = new User({ username, password });
         await newUser.save();
 
         res.status(201).json({ message: 'Registration successful' });
       } catch (error) {
-        console.error(error);
+        console.error("Error:", error);
         res.status(500).json({ message: 'Registration failed' });
       }
     });
+// login endpoint
+    app.post('/api/login', async (req, res) => {
+      const { username, password } = req.body;
+    
+      try {
+        // Query for a user with the provided username and password
+        const user = await User.findOne({
+          $and: [{ username: username.toLowerCase() }, { password }],
+        });
+    
+        if (!user) {
+          // If no user is found, return a 401 Unauthorized response
+          return res.status(401).json({ success: false, message: 'Invalid username or password' });
+        }
+    
+        // If the user is found, return a 200 OK response
+        res.status(200).json({ success: true, message: 'Login successful' });
+      } catch (error) {
+        // Handle any errors that may occur during login
+        console.error("Error:", error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+      }
+    });
+    
 
     //Login endpoint
-    app.post('/api/login', async (req, res) => {
-      const { username, password } = req.body; //fix the destruction statement
+    //app.post('/api/login', async (req, res) => {
+      //const { username, password } = req.body; 
+      //fix the destruction statement
       //Handle login logic here, query your Mongodb for user authentication, etc.filter(item => item)
-    });
+    //});
+
+    
 
   } finally {
     // Ensure that the client will close when you finish/error
@@ -116,7 +148,7 @@ app.post('/api/register', async (req, res) => {
     res.status(201).json({ success: true, message: 'User registered successfully' });
   } catch (error) {
     // Handle any errors that may occur during registration
-    console.error(error);
+    console.error("Error:", error);
     res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 });
@@ -137,5 +169,5 @@ app.get('/', (req, res) => {
     res.json('data');
 });
 
-
+// To start the server
 app.listen(PORT, () => console.log(`Server started at port ${PORT}`));

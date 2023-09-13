@@ -7,17 +7,23 @@ const client = new MongoClient(uri);
 
 async function run() {
   try {
-    const database = client.db('sample_mflix');
-    const movies = database.collection('movies');
+    await client.connect()
+    const database = client.db('MongoClient');
+    const blogpost = database.collection('blogpost');
+    const login = database.collection('login');
+    const register = database.collection('register');
 
-    // Query for a movie that has the title 'Back to the Future'
-    const query = { title: 'Back to the Future' };
-    const movie = await movies.findOne(query);
+
+    // Query for a blogpost that has the title 'Health Blog Post'
+    const query = { title: 'Health Blog Post' };
+    const blogPostDocument = await blogpost.findOne(query);
     
 
-    console.log(movie);
+    console.log(blogPostDocument);
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
   }
 }
+
+run().catch(console.error);
