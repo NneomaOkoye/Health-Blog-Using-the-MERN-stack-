@@ -4,10 +4,10 @@ const router = express.Router();
 // Sample data for blog posts (replace with your data source)
 const blogPosts = [
   { id: 1, title: 'First Blog Post', content: 'This is the content of the first blog post.', image: 'https://images.pexels.com/photos/18262223/pexels-photo-18262223.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'},
-  { id: 2, title: 'Second Blog Post', content: 'This is the content of the second blog post.', image: ''},
-  { id: 3, title: 'Thrid Blog Post', content: 'This is the content of the second blog post.', image: ''},
-  { id: 4, author: 'Fourth Blog Post', content: 'This is the content of the second blog post.', image: ''},
-  { id: 5, date: 'Fifth Blog Post', content: 'This is the content of the second blog post.', image: ''},
+  { id: 2, title: 'Second Blog Post', content: 'This is the content of the second blog post.', image: 'https://images.pexels.com/photos/18262223/pexels-photo-18262223.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'},
+  { id: 3, title: 'Thrid Blog Post', content: 'This is the content of the second blog post.', image: 'https://images.pexels.com/photos/18262223/pexels-photo-18262223.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'},
+  { id: 4, title: 'Fourth Blog Post', content: 'This is the content of the second blog post.', image: 'https://images.pexels.com/photos/18262223/pexels-photo-18262223.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'},
+  { id: 5, title: 'Fifth Blog Post', content: 'This is the content of the second blog post.', image: 'https://images.pexels.com/photos/18262223/pexels-photo-18262223.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'},
 
 ];
 
