@@ -30,7 +30,7 @@
     },
     {
     "id": 5,
-    "title": "Fifth Blog Post",
+    "title": "Fiftth Blog Post",
     "content": "This is the content of the second blog post.",
     "image": "https://images.pexels.com/photos/18262223/pexels-photo-18262223.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
     "profilePictureURL": " text: String"
