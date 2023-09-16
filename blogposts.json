@@ -27,9 +27,11 @@
     "profilePictureURL": " text: String"},
     {
     "id": 4,
-    "title": "Fourth Blog Post",
-    "content": "This is the content of the second blog post.",
-    "image": "https://images.pexels.com/photos/18262223/pexels-photo-18262223.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    "title": "Mindful Movement: A Guide to Yoga for Physical and Mental Wellness",
+    "content": "Yoga:",
+    "Introduction": "Yoga is not just a physical exercise; it's a holistic practice that can enhance your physical and mental wellness. In this post, we'll delve into the world of yoga, exploring how its mindful movements, breathwork, and philosophy can contribute to your overall health and well-being.",
+    "body": 
+    "image": "https://cdn.shortpixel.ai/spai/q_lossy+w_632+to_avif+ret_img/www.mindful.org/content/uploads/Movement-10x-Header-2048x1366.jpg",
     "profilePictureURL": " text: String"
     },
     {
